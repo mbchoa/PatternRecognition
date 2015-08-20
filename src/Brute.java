@@ -3,6 +3,12 @@ import java.util.Arrays;
 public class Brute {
 
     public static void main(String[] args) {
+        // rescale coordinates and turn on animation mode
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        StdDraw.show(0);
+        StdDraw.setPenRadius(0.01);  // make the points a bit larger
+
         // read in the input
         String filename = args[0];
         In in = new In(filename);
@@ -11,30 +17,44 @@ public class Brute {
         for (int i = 0; i < N; i++) {
             int x = in.readInt();
             int y = in.readInt();
-            pointsArr[i] = new Point(x, y);
+            Point p = new Point(x, y);
+            p.draw();
+            pointsArr[i] = p;
         }
 
         Arrays.sort(pointsArr);
 
-        Stopwatch sw = new Stopwatch();
+        StdDraw.setPenRadius(0.0);
+
+        Point P, Q, R, S;
         for(int p = 0; p < N; p++) {
+            P = pointsArr[p];
             for(int q = p+1; q < N; q++) {
+                Q = pointsArr[q];
                 for(int r = q+1; r < N; r++) {
-                    double slopePtoQ = pointsArr[p].slopeTo(pointsArr[q]);
-                    double slopeQtoR = pointsArr[q].slopeTo(pointsArr[r]);
+                    R = pointsArr[r];
+                    double slopePtoQ = P.slopeTo(Q);
+                    double slopeQtoR = Q.slopeTo(R);
                     if(slopePtoQ == slopeQtoR) {
                         for(int s = r+1; s < N; s++) {
-                            double slopeRtoS = pointsArr[r].slopeTo(pointsArr[s]);
-                            if(slopePtoQ == slopeQtoR && slopeQtoR == slopeRtoS)
-                                StdOut.println(pointsArr[p].toString() + " -> " +
-                                        pointsArr[q].toString() + " -> " +
-                                        pointsArr[r].toString() + " -> " +
-                                        pointsArr[s].toString());
+                            S = pointsArr[s];
+                            double slopeRtoS = R.slopeTo(S);
+                            if(slopeQtoR == slopeRtoS) {
+                                StdOut.println(P.toString() + " -> " +
+                                        Q.toString() + " -> " +
+                                        R.toString() + " -> " +
+                                        S.toString());
+                                P.drawTo(Q);
+                                Q.drawTo(R);
+                                R.drawTo(S);
+                            }
                         }
                     }
                 }
             }
         }
-        StdOut.println(sw.elapsedTime());
+
+        // display to screen all at once
+        StdDraw.show(0);
     }
 }
